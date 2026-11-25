@@ -1,0 +1,32 @@
+name: X-Leser
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # alle 5 Minuten (GitHub startet oft etwas verzögert)
+  workflow_dispatch:         # manuell starten: Actions → X-Leser → Run workflow
+
+concurrency:
+  group: x-leser
+  cancel-in-progress: false
+
+jobs:
+  lesen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Pakete installieren
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: X lesen und an den Monitor schicken
+        env:
+          X_AUTH_TOKEN: ${{ secrets.X_AUTH_TOKEN }}
+          X_CT0: ${{ secrets.X_CT0 }}
+          MONITOR_URL: ${{ secrets.MONITOR_URL }}
+          MONITOR_SECRET: ${{ secrets.MONITOR_SECRET }}
+        run: python leser.py
