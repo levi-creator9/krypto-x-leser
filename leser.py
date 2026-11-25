@@ -109,8 +109,8 @@ def senden(url: str, secret: str, nutzlast: dict):
 def main():
     fehlend = [k for k in ("X_AUTH_TOKEN", "X_CT0", "MONITOR_URL", "MONITOR_SECRET") if not os.environ.get(k)]
     if fehlend:
-        print("Fehlende Secrets:", ", ".join(fehlend))
-        sys.exit(1)
+        print("Noch nicht eingerichtet – fehlende Secrets:", ", ".join(fehlend))
+        return  # still beenden, damit GitHub keine Fehler-Mails schickt
     url, secret = os.environ["MONITOR_URL"], os.environ["MONITOR_SECRET"]
     try:
         tweets = lesen(os.environ["X_AUTH_TOKEN"].strip(), os.environ["X_CT0"].strip())
