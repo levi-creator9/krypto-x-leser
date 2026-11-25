@@ -58,6 +58,14 @@ def lesen(auth_token: str, ct0: str):
         try:
             page.wait_for_selector('article[data-testid="tweet"]', timeout=30000)
         except PWTimeout:
+            # Diagnose (ohne persönliche Daten): wo sind wir, was steht auf der Seite?
+            try:
+                sichtbar = page.inner_text("body")[:400].replace("\n", " | ")
+            except Exception:
+                sichtbar = "?"
+            print("DIAGNOSE url:", page.url)
+            print("DIAGNOSE titel:", page.title())
+            print("DIAGNOSE text:", sichtbar)
             raise RuntimeError("Keine Posts sichtbar – evtl. gesperrt, Captcha oder noch niemandem gefolgt")
 
         for _ in range(SCROLLS):
